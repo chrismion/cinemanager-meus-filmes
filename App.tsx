@@ -1,0 +1,1 @@
+// Este arquivo não é mais usado. Veja main.ts (index.tsx) e index.html

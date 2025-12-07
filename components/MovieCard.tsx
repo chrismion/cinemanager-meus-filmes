@@ -1,0 +1,1 @@
+// Este arquivo não é mais usado. O HTML é gerado no main.ts

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineManager JS</title>
+    <!-- Tailwind CSS para estilizar -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (Versão Script para usar sem React) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuração das cores do tema -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                dark: '#1a1a2e',
+                light: '#16213e',
+                accent: '#e94560',
+                text: '#f1f1f2'
+              }
+            }
+          }
+        }
+      }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-brand-dark text-brand-text antialiased font-sans">
+    
+    <!-- CABEÇALHO (Fica sempre visível) -->
+    <header class="bg-brand-light border-b border-gray-700 py-6 sticky top-0 z-10 shadow-lg">
+      <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
+          <div class="bg-brand-accent p-2 rounded-lg">
+            <i data-lucide="film" class="text-white"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-white tracking-tight">CineManager</h1>
+        </div>
+        
+        <!-- Barra de Busca (Só aparece na tela de lista) -->
+        <div id="search-container" class="relative w-full md:w-96 group">
+          <input 
+            type="text" 
+            id="search-input"
+            placeholder="Pesquisar filme ou gênero..." 
+            class="w-full bg-brand-dark border border-gray-600 text-white pl-10 pr-4 py-2 rounded-full focus:border-brand-accent outline-none transition-all placeholder-gray-500"
+          />
+          <i data-lucide="search" class="absolute left-3 top-2.5 text-gray-400 w-4 h-4"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container mx-auto px-4 py-8 flex-1">
+
+      <!-- TELA 1: LISTA DE FILMES -->
+      <div id="screen-list">
+        
+        <!-- Barra de topo: Contador e Botão Novo -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+          <h2 id="movies-counter" class="text-xl text-gray-300 font-medium">
+            Carregando...
+          </h2>
+          
+          <button id="btn-add-new" class="flex items-center gap-2 bg-brand-accent hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg hover:-translate-y-1">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i> Novo Filme
+          </button>
+        </div>
+
+        <!-- Onde os filmes vão ser desenhados pelo JS -->
+        <div id="movies-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- O JavaScript vai preencher isso aqui -->
+        </div>
+
+        <!-- Mensagem de lista vazia (inicialmente escondida com 'hidden') -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-20 bg-brand-light/50 rounded-xl border-2 border-dashed border-gray-700 mt-4">
+          <i data-lucide="film" class="text-gray-600 w-16 h-16 mb-4 opacity-50"></i>
+          <p class="text-gray-400 text-xl mb-4 font-medium text-center">Nenhum filme encontrado.</p>
+        </div>
+      </div>
+
+      <!-- TELA 2: FORMULÁRIO (Inicialmente escondida com 'hidden') -->
+      <div id="screen-form" class="hidden">
+        <div class="bg-brand-light p-6 rounded-xl border border-gray-700 shadow-2xl max-w-2xl mx-auto">
+          <h2 id="form-title" class="text-2xl font-bold mb-6 text-white flex items-center gap-2">
+            <!-- JS muda o texto para 'Novo' ou 'Editar' -->
+          </h2>
+          
+          <form id="movie-form" class="space-y-4">
+            <input type="hidden" id="input-id"> <!-- Campo invisível para guardar o ID na edição -->
+
+            <!-- Título e Diretor -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Título</label>
+                <input type="text" id="input-title" class="w-full bg-brand-dark border border-gray-600 rounded p-2 text-white outline-none focus:border-brand-accent" required placeholder="Ex: Matrix" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Diretor</label>
+                <input type="text" id="input-director" class="w-full bg-brand-dark border border-gray-600 rounded p-2 text-white outline-none focus:border-brand-accent" required placeholder="Ex: Wachowski Sisters" />
+              </div>
+            </div>
+
+            <!-- Ano, Gênero, Nota -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Ano</label>
+                <input type="number" id="input-year" class="w-full bg-brand-dark border border-gray-600 rounded p-2 text-white outline-none focus:border-brand-accent" required />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Gênero</label>
+                <select id="input-genre" class="w-full bg-brand-dark border border-gray-600 rounded p-2 text-white outline-none focus:border-brand-accent" required>
+                  <option value="">Selecione...</option>
+                  <option value="Ação">Ação</option>
+                  <option value="Aventura">Aventura</option>
+                  <option value="Comédia">Comédia</option>
+                  <option value="Drama">Drama</option>
+                  <option value="Ficção Científica">Ficção Científica</option>
+                  <option value="Terror">Terror</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Nota (1-5)</label>
+                <input type="number" id="input-rating" min="1" max="5" class="w-full bg-brand-dark border border-gray-600 rounded p-2 text-white outline-none focus:border-brand-accent" required />
+              </div>
+            </div>
+
+            <!-- URL Imagem -->
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-1">URL da Capa</label>
+              <input type="text" id="input-image" class="w-full bg-brand-dark border border-gray-600 rounded p-2 text-white outline-none focus:border-brand-accent" placeholder="https://..." />
+            </div>
+
+            <!-- Descrição -->
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-1">Sinopse</label>
+              <textarea id="input-description" rows="4" class="w-full bg-brand-dark border border-gray-600 rounded p-2 text-white outline-none focus:border-brand-accent resize-none"></textarea>
+            </div>
+
+            <!-- Botões -->
+            <div class="flex gap-4 pt-4">
+              <button type="button" id="btn-cancel" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-bold">Cancelar</button>
+              <button type="submit" class="flex-1 bg-brand-accent hover:bg-red-600 text-white py-3 rounded-lg font-bold">Salvar Filme</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="border-t border-gray-800 py-8 mt-8 bg-brand-light">
+      <div class="container mx-auto text-center text-gray-500 text-sm">
+        <p>© 2024 CineManager - Versão JS Vanilla</p>
+      </div>
+    </footer>
+
+    <!-- Importando o nosso arquivo principal do TypeScript -->
+    <!-- O sistema de build vai transformar o index.tsx (agora lógica pura) em JS aqui -->
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
